@@ -152,6 +152,3 @@ docker/
 
 compressai/
 tests/
-third_party/
-NEWS*
-setup.py
