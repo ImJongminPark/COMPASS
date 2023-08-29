@@ -17,7 +17,7 @@ __pycache__/
 *$py.class
 
 # C extensions
-*.so
+#*.so
 
 # Distribution / packaging
 .Python
@@ -150,5 +150,12 @@ log_dir_eval2/*
 *.zip
 docker/
 
-compressai/
 tests/
+
+__main__*
+results*
+bit_amount_PSNR_results/
+
+.vscode/
+
+checkpoints/

@@ -1,15 +1,9 @@
-
-# Residual Dense Network for Image Super-Resolution
-# https://arxiv.org/abs/1802.08797
-
-import time
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
-import math
 
-from utils.metric import *
+from compass.utils.metric import *
 
 
 def make_coord(shape, ranges=None, flatten=True):

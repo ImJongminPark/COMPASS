@@ -1,10 +1,7 @@
 import torch
-import torch.nn as nn
-import torch.optim as optim
 import torch.nn.functional as F
 
 import math
-
 
 def psnr(a: torch.Tensor, b: torch.Tensor) -> float:
     mse = F.mse_loss(a, b).item() + 1e-8
