@@ -36,6 +36,7 @@ CDFs related buffers required for entropy coding.
 import argparse
 import hashlib
 import sys
+import yaml
 
 from pathlib import Path
 from typing import Dict

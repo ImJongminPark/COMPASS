@@ -11,7 +11,7 @@ def count_parameters(model):
     return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
 
-def configure_optimizers(net, args):
+def configure_optimizers(net, cfg):
     """Separate parameters for the main optimizer and the auxiliary optimizer.
     Return two optimizers"""
 
@@ -36,11 +36,11 @@ def configure_optimizers(net, args):
 
     optimizer = optim.Adam(
         (params_dict[n] for n in sorted(parameters)),
-        lr=args.learning_rate,
+        lr=cfg['lr'],
     )
     aux_optimizer = optim.Adam(
         (params_dict[n] for n in sorted(aux_parameters)),
-        lr=args.aux_learning_rate,
+        lr=cfg['lr_aux'],
     )
     return optimizer, aux_optimizer
 
@@ -56,12 +56,15 @@ def output_img_save(output, epoch, count, scale_idx, image_save_path, name):
     out.save(image_save_path + '/output_{:03d}_{:02d}_{:02d}_{}.png'.format(epoch, count, scale_idx, name))
 
 
-def save_checkpoint(state, is_best, save_name, epoch):
-    dir_name = "/raid/20204351/checkpoints/checkpoint_" + save_name
+def save_checkpoint(state, is_best, lmbda, epoch):
+    dir_name = "checkpoints/lambda_" + str(lmbda)
     os.makedirs(dir_name, exist_ok=True)
+    
     file_name = "epoch_" + format(epoch, '04') + ".pth.tar"
+    
     if epoch % 10 == 0:
         torch.save(state, dir_name + '/' + file_name)
+    
     if is_best:
         torch.save(state, dir_name + '/' + "best_model.pth.tar")
 

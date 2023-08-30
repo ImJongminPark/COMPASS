@@ -144,7 +144,12 @@ dmypy.json
 *.png
 *.csv
 *.tar
-log_dir_eval2/*
+
+log_dir_eval2/
+log/
+others/
+pretrained/
+
 *.yaml
 *.json
 *.zip

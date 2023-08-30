@@ -59,10 +59,10 @@ class RDB(nn.Module):
 
 
 class LIFF_prediction(nn.Module):
-    def __init__(self, args):
+    def __init__(self, cfg):
         super(LIFF_prediction, self).__init__()
-        G0 = args.G0
-        kSize = args.RDNkSize
+        G0 = cfg['LIFF']['G0']
+        kSize = cfg['LIFF']['RDNkSize']
 
         self.kernel_size = 3
         self.inC = G0
@@ -75,7 +75,7 @@ class LIFF_prediction(nn.Module):
             'C': (4, 8, 64),
             'D': (4, 4, 32),
             'E': (4, 4, 16)
-        }[args.RDNconfig]
+        }[cfg['LIFF']['RDNconfig']]
 
         # Shallow feature extraction net
         self.SFENet1 = nn.Conv2d(3, G0, kSize, padding=(kSize - 1) // 2, stride=1)
@@ -160,14 +160,14 @@ class LIFF_prediction(nn.Module):
 
 
 class COMPASS(nn.Module):
-    def __init__(self, model, model_el, model_prediction, args):
+    def __init__(self, model, model_el, model_prediction, cfg):
         super(COMPASS, self).__init__()
         self.model = model
         self.model_el = model_el
         self.model_prediction = model_prediction
-        self.args = args
+        self.cfg = cfg
 
-    def configure_optimizers(self, net, args):
+    def configure_optimizers(self, net, cfg):
         """Separate parameters for the main optimizer and the auxiliary optimizer.
         Return two optimizers"""
         parameters = {
@@ -191,17 +191,17 @@ class COMPASS(nn.Module):
 
         optimizer = optim.Adam(
             (params_dict[n] for n in sorted(parameters)),
-            lr=args.learning_rate,
+            lr=cfg['lr'],
         )
         aux_optimizer = optim.Adam(
             (params_dict[n] for n in sorted(aux_parameters)),
-            lr=args.aux_learning_rate,
+            lr=cfg['lr_aux'],
         )
         return optimizer, aux_optimizer
 
     def optimizer(self):
-        optimizer_el, aux_optimizer_el = self.configure_optimizers(self.model_el, self.args)
-        optimizer_prediction = optim.Adam(self.model_prediction.parameters(), lr=self.args.learning_rate, betas=(0.9, 0.999))
+        optimizer_el, aux_optimizer_el = self.configure_optimizers(self.model_el, self.cfg)
+        optimizer_prediction = optim.Adam(self.model_prediction.parameters(), lr=self.cfg['lr'], betas=(0.9, 0.999))
 
         return optimizer_el, aux_optimizer_el, optimizer_prediction
 

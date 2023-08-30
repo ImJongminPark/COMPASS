@@ -67,6 +67,7 @@ class ImageFolder_train(Dataset):
         self.transform = transform
 
         self.scale_entry = []
+        
         self.count = 0
 
     def __getitem__(self, index):

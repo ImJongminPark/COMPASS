@@ -38,7 +38,7 @@ from compressai.ans import BufferedRansEncoder, RansDecoder
 from compressai.entropy_models import EntropyBottleneck, GaussianConditional
 from compressai.layers import GDN, MaskedConv2d
 
-from .utils import conv, deconv, update_registered_buffers
+from .utils import *
 
 __all__ = [
     "CompressionModel",
@@ -276,8 +276,6 @@ class MeanScaleHyperprior(ScaleHyperprior):
 
     def __init__(self, N, M, **kwargs):
         super().__init__(N, M, **kwargs)
-
-        print("Mean scale CRLP")
 
         self.h_a = nn.Sequential(
             conv(M, N, stride=1, kernel_size=3),
