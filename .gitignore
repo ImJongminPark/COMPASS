@@ -150,7 +150,6 @@ log/
 others/
 pretrained/
 
-*.yaml
 *.json
 *.zip
 docker/

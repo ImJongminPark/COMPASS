@@ -1,0 +1,18 @@
+CompModel:
+    BL: mbt2018-mean
+    EL: mbt2018-mean
+
+LIFF:
+    G0: 64
+    RDNkSize: 3
+    RDNconfig: D
+
+checkpoint: checkpoints/lambda_0.013/best_model_updated.pth.tar
+
+dataset: datasets_img/test
+
+cuda: True
+
+scale_e1: 0.5
+scale_e2: 1.0
+

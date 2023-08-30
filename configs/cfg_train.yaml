@@ -1,0 +1,36 @@
+CompModel:
+    BL: mbt2018-mean
+    EL: mbt2018-mean
+
+LIFF:
+    G0: 64
+    RDNkSize: 3
+    RDNconfig: D
+
+dataset: datasets_img/
+train_split: train_512
+test_split: test
+
+epochs: 300
+nWorkers: 2
+batchSize: 2
+seed: 0
+cuda: True
+save: True
+local_rank: 0
+
+lr: 0.00005
+lr_aux: 0.001
+
+lmbda: 0.013
+quality: 4
+
+optim:
+    step_size: 100
+    gamma: 0.5
+
+clip_max_norm: 1.0
+
+checkpoint: 
+checkpoint_el: ./pretrained/img_comp_el/lambda_0.013/pretrained.pth.tar
+checkpoint_prediction: ./pretrained/liff_prediction/pretrained.pth.tar
