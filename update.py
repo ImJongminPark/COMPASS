@@ -92,45 +92,15 @@ models = {
 models.update(zoo_models)
 
 
-def setup_args():
-    parser = argparse.ArgumentParser(description=description)
-    parser.add_argument(
-        "filepath", type=str, help="Path to the checkpoint model to be exported."
-    )
-    parser.add_argument("-n", "--name", type=str, help="Exported model name.")
-    parser.add_argument("-d", "--dir", type=str, help="Exported model directory.")
-    parser.add_argument(
-        "--no-update",
-        action="store_true",
-        default=False,
-        help="Do not update the model CDFs parameters.",
-    )
-    parser.add_argument(
-        "-ab",
-        "--architecture_base",
-        choices=models.keys(),
-        help="Set model architecture (default: %(default)s).",
-    )
-    parser.add_argument(
-        "-ar",
-        "--architecture_res",
-        choices=models.keys(),
-        help="Set model architecture (default: %(default)s).",
-    )
-    return parser
-
-
-def main(argv):
-    args = setup_args().parse_args(argv)
-
-    filepath = Path(args.filepath).resolve()
+def main(cfg):
+    filepath = Path(cfg['checkpoint_update']).resolve()
     if not filepath.is_file():
         raise RuntimeError(f'"{filepath}" is not a valid file.')
 
     state_dict = load_checkpoint(filepath)
 
-    model_cls_or_entrypoint_base = models[args.architecture_base]
-    model_cls_or_entrypoint_res = models[args.architecture_res]
+    model_cls_or_entrypoint_base = models[cfg['CompModel']['BL']]
+    model_cls_or_entrypoint_res = models[cfg['CompModel']['EL']]
 
     if not isinstance(model_cls_or_entrypoint_base, type):
         model_cls = model_cls_or_entrypoint_base()
@@ -142,30 +112,24 @@ def main(argv):
     net = model_cls.from_state_dict(state_dict['base_state_dict'])
     net_res = model_res_cls.from_state_dict(state_dict['residual_state_dict'])
 
-    if not args.no_update:
-        net.update(force=True)
-        net_res.update(force=True)
+    net.update(force=True)
+    net_res.update(force=True)
 
     state_dict['base_state_dict'] = net.state_dict()
     state_dict['residual_state_dict'] = net_res.state_dict()
 
-    if not args.name:
-        filename = filepath
-        while filename.suffixes:
-            filename = Path(filename.stem)
-    else:
-        filename = args.name
+    filename = filepath
+    while filename.suffixes:
+        filename = Path(filename.stem)
 
     ext = "".join(filepath.suffixes[:2])
-
-    if args.dir is not None:
-        output_dir = Path(args.dir)
-        Path(output_dir).mkdir(exist_ok=True)
-    else:
-        output_dir = Path.cwd()
 
     filepath_update = f"{filepath}"[:-len(ext)] + "_updated" + f"{ext}"
     torch.save(state_dict, filepath_update)
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    with open('configs/cfg_eval.yaml') as f:
+        cfg = yaml.safe_load(f)
+
+    main(cfg)
+

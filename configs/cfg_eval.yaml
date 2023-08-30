@@ -8,6 +8,7 @@ LIFF:
     RDNconfig: D
 
 checkpoint: checkpoints/lambda_0.013/best_model_updated.pth.tar
+checkpoint_update: checkpoints/lambda_0.013/best_model.pth.tar
 
 dataset: datasets_img/test
 
