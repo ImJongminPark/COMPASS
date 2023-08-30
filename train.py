@@ -29,11 +29,11 @@ from torchvision import transforms
 from compressai.datasets import ImageFolder_down_img_TRAIN, ImageFolder_down_img_TEST_many_fix_enhance_2
 from compressai.zoo import models
 
-from model import *
-from utils.loss import *
-from utils.metric import *
-from utils.utils import *
-from utils.distribution import *
+from compass.model import *
+from compass.utils.loss import *
+from compass.utils.metric import *
+from compass.utils.utils import *
+from compass.utils.distribution import *
 
 from torch.utils.tensorboard import SummaryWriter
 
@@ -306,7 +306,7 @@ def parse_args(argv):
     parser.add_argument(
         "-d",
         "--dataset",
-        default="examples/datasets_img",
+        default="datasets_img",
         type=str,
         help="Training dataset"
     )
@@ -351,13 +351,6 @@ def parse_args(argv):
         "--aux-learning-rate",
         default=1e-3,
         help="Auxiliary loss learning rate (default: %(default)s)",
-    )
-    parser.add_argument(
-        "--patch-size",
-        type=int,
-        nargs=2,
-        default=None,
-        help="Size of the patches to be cropped (default: %(default)s)",
     )
     # Option for Residual dense network (RDN)
     parser.add_argument('--G0', type=int, default=64,

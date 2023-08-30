@@ -154,8 +154,10 @@ tests/
 
 __main__*
 results*
-bit_amount_PSNR_results/
+bit_amount_PSNR_results*
 
 .vscode/
 
 checkpoints/
+
+datasets_img/

@@ -193,3 +193,78 @@ def meshgrid2d(N: int, C: int, H: int, W: int, device: torch.device):
     """Create a 2D meshgrid for interpolation."""
     theta = torch.eye(2, 3, device=device).unsqueeze(0).expand(N, 2, 3)
     return F.affine_grid(theta, (N, C, H, W), align_corners=False)
+
+
+class prediction(nn.Module):
+    def __init__(self, M, N):
+        super().__init__()
+        self.M = M
+        self.N = N
+        self.conv1 = conv(self.M, self.N)
+        self.GDN1 = GDN(self.N)
+
+        self.conv2 = conv(self.N, self.N, stride=1)
+        self.GDN2 = GDN(self.N)
+
+        self.conv3 = conv(self.N, self.N, stride=1)
+        self.GDN3 = GDN(self.N)
+        self.conv4 = conv(self.N, self.N, stride=1)
+
+        self.conv4_up = conv(self.N, self.N, stride=1)
+        self.GDN4_up = GDN(self.N)
+        self.conv3_up = conv(self.N, self.N, stride=1)
+
+        self.conv2_up = deconv(self.N, self.N)
+        self.GDN2_up = GDN(self.N, inverse=True)
+        self.conv1_up = deconv(self.N, self.N)
+
+    def forward(self, x):
+        out = self.conv1(x)
+        out = self.GDN1(out)
+        out = self.conv2(out)
+        res1 = self.GDN2(out)
+
+        out = self.conv3(res1)
+        out = self.GDN3(out)
+        out = self.conv4(out)
+
+        res2 = out + res1
+
+        out = self.conv4_up(res2)
+        out = self.GDN3(out)
+        out = self.conv3_up(out)
+
+        res3 = out + res2
+
+        out = self.conv2_up(res3)
+        out = self.GDN2_up(out)
+        out = self.conv1_up(out)
+
+        return out
+
+
+class upscaling(nn.Module):
+    def __init__(self, N):
+        super().__init__()
+        self.N = N
+        self.conv1 = deconv(self.N, self.N)
+        self.conv2 = conv(self.N, self.N, stride=1)
+        self.conv3 = conv(self.N, self.N, stride=1)
+
+    def forward(self, x):
+        out = self.conv1(x)
+        out = self.conv2(out)
+        out = self.conv3(out)
+
+        return out
+
+
+class custum_round_func(torch.autograd.Function):
+    @staticmethod
+    def forward(ctx, x):
+        return x.round()
+
+    @staticmethod
+    def backward(ctx, g):
+        return g
+
