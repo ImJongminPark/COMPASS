@@ -286,7 +286,7 @@ def test_epoch_RD(epoch, test_dataloader, wrap_model, len_train_dataloader, writ
     return
 
 
-def main(cfg):
+def main(cfg, args):
     save_name = "results"
     log_dir = "./log"
     
@@ -298,7 +298,7 @@ def main(cfg):
         torch.manual_seed(cfg['seed'])
         random.seed(cfg['seed'])
 
-    torch.cuda.set_device(cfg['local_rank'])
+    torch.cuda.set_device(args.local_rank)
     torch.distributed.init_process_group(backend="nccl", init_method='env://')
     synchronize()
 
@@ -361,6 +361,9 @@ def main(cfg):
 
     net_prediction.load_state_dict(pretrained_prediction["model_state_dict"])
 
+    if is_main_process():
+        print("Loaded coarse model.")
+
     if cfg['checkpoint']:  # load from previous checkpoint
         print("Loading", cfg['checkpoint'])
         checkpoint = torch.load(cfg['checkpoint'], map_location=device)
@@ -369,7 +372,7 @@ def main(cfg):
         net_prediction.load_state_dict(checkpoint["conti_sr_state_dict"])
 
     wrap_model = torch.nn.parallel.DistributedDataParallel(COMPASS(net, net_enhance, net_prediction, cfg).to(device),
-                                                           device_ids=[cfg['local_rank']],
+                                                           device_ids=[args.local_rank],
                                                            find_unused_parameters=True)
 
     optimizer_el, aux_optimizer_el, optimizer_prediction = wrap_model.module.optimizer()
@@ -437,8 +440,12 @@ def main(cfg):
                     epoch
                 )
 
-if __name__ == "__main__":
+if __name__ == "__main__": 
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--local_rank', type=int)
+    args = parser.parse_args()
+
     with open('configs/cfg_train.yaml') as f:
         cfg = yaml.safe_load(f)
-    
-    main(cfg)
+
+    main(cfg, args)
