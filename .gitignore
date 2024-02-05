@@ -163,5 +163,6 @@ bit_amount_PSNR_results*
 .vscode/
 
 checkpoints/
+checkpoint_test/
 
 datasets_img/

@@ -7,7 +7,7 @@
 
 ## Installation
 
-COMPASS supports python 3.7+ and Pytorch 1.13+
+COMPASS supports python 3.7+ and Pytorch 1.13+.
 
 ```bash
 git clone https://github.com/ImJongminPark/COMPASS.git
@@ -20,6 +20,12 @@ pip install torch torchvision
 
 * PyYAML
 * tensorboard
+
+## Datasets
+
+You can download the training and test datasets via this [link](https://drive.google.com/drive/folders/18-H3ukaMlcqKjbtHxfMlq_cToesOkAo6).
+
+## Training
 
 ## Tests
 
