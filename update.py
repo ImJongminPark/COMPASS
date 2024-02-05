@@ -33,10 +33,9 @@ Update the CDFs parameters of a trained model.
 To be called on a model checkpoint after training. This will update the internal
 CDFs related buffers required for entropy coding.
 """
-import argparse
 import hashlib
-import sys
 import yaml
+import os 
 
 from pathlib import Path
 from typing import Dict
@@ -93,7 +92,8 @@ models.update(zoo_models)
 
 
 def main(cfg):
-    filepath = Path(cfg['checkpoint_update']).resolve()
+    checkpoint_path = os.path.join('checkpoints', 'lambda_' + str(cfg['lmbda']), 'best_model.pth.tar')
+    filepath = Path(checkpoint_path).resolve()
     if not filepath.is_file():
         raise RuntimeError(f'"{filepath}" is not a valid file.')
 

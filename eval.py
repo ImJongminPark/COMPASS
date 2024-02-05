@@ -185,18 +185,28 @@ def inference(model, model_el, model_prediction, x_multiscale, img_num):
     os.makedirs(image_save_path, exist_ok=True)
 
     for i in range(len(x_multiscale)):
-        k_psnr = f'psnr (stage {i})'
-        v_psnr = psnr(x_multiscale[i], output_list[i].clamp_(0, 1))
+        if i == 0:
+            k_psnr = 'PSNR (Base Layer)'
+            v_psnr = psnr(x_multiscale[i], output_list[i].clamp_(0, 1))
 
-        output_dict[k_psnr] = v_psnr
+            output_dict[k_psnr] = v_psnr
 
-        k_bit_amount = f'bit_amount (stage {i})'
-        v_bit_amount = bit_amount_list[i]
+            k_bit_amount = f'Bits (Base Layer)'
+            v_bit_amount = bit_amount_list[i]
 
-        output_dict[k_bit_amount] = v_bit_amount
+            output_dict[k_bit_amount] = v_bit_amount      
+        else:
+            k_psnr = f'PSNR (Enhance. Layer {i})'
+            v_psnr = psnr(x_multiscale[i], output_list[i].clamp_(0, 1))
 
-        if i > 0:
-            k_conti_time = f'conti. sr time (stage {i})'
+            output_dict[k_psnr] = v_psnr
+
+            k_bit_amount = f'Acc. Bits (Enhance. Layer {i})'
+            v_bit_amount = bit_amount_list[i]
+
+            output_dict[k_bit_amount] = v_bit_amount
+
+            k_conti_time = f'LIFF time (Enhance. Layer {i})'
             v_conti_time = prediction_time_list[i-1]
 
             output_dict[k_conti_time] = v_conti_time
@@ -209,12 +219,12 @@ def inference(model, model_el, model_prediction, x_multiscale, img_num):
 
     #output_dict[k_FLOPS] = v_FLOPS
 
-    k_total_time = 'total_time'
+    k_total_time = 'Total time'
     v_total_time = time_overall
 
     output_dict[k_total_time] = v_total_time
 
-    k_total_time_ex_enc = 'total_time (w/o enc)'
+    k_total_time_ex_enc = 'Total time (w/o enc)'
     v_total_time_ex_enc = time_overall - encoding_time_total
 
     output_dict[k_total_time_ex_enc] = v_total_time_ex_enc
@@ -233,7 +243,9 @@ def eval_model(cfg, model, model_el, filepaths, scale_el1, scale_el2):
     metrics = defaultdict(float)
 
     model_prediction = LIFF_prediction(cfg)
-    checkpoint = torch.load(cfg['checkpoint'], map_location=device)
+
+    checkpoint_path = os.path.join('checkpoints', 'lambda_' + str(cfg['lmbda']), 'best_model_updated.pth.tar')
+    checkpoint = torch.load(checkpoint_path, map_location=device)
     model_prediction.load_state_dict(checkpoint["conti_sr_state_dict"])
 
     count = 0
@@ -270,7 +282,8 @@ def main(cfg):
 
     compressai.set_entropy_coder(compressai.available_entropy_coders()[0])
 
-    runs = [cfg['checkpoint']]
+    checkpoint_path = os.path.join('checkpoints', 'lambda_' + str(cfg['lmbda']), 'best_model_updated.pth.tar')
+    runs = [checkpoint_path]
     opts = (cfg['CompModel']['BL'], cfg['CompModel']['EL'])
     load_func = load_checkpoint
 

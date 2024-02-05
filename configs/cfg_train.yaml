@@ -31,5 +31,5 @@ optim:
 clip_max_norm: 1.0
 
 checkpoint: 
-checkpoint_el: ./pretrained/img_comp_el/lambda_0.013/pretrained.pth.tar
+checkpoint_el: ./pretrained/res_comp_el
 checkpoint_prediction: ./pretrained/liff_prediction/pretrained.pth.tar

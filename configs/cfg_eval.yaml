@@ -7,8 +7,7 @@ LIFF:
     RDNkSize: 3
     RDNconfig: D
 
-checkpoint: checkpoints/lambda_0.013/best_model_updated.pth.tar
-checkpoint_update: checkpoints/lambda_0.013/best_model.pth.tar
+lmbda: 0.013
 
 dataset: datasets_img/test
 

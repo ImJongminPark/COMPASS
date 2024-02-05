@@ -1,6 +1,8 @@
 # COMPASS: High-Efficiency Deep Image Compression with Arbitrary-scale Spatial Scalability
 
-### [Paper](https://openaccess.thecvf.com/content/ICCV2023/papers/Park_COMPASS_High-Efficiency_Deep_Image_Compression_with_Arbitrary-scale_Spatial_Scalability_ICCV_2023_paper.pdf) | [Project Page](https://imjongminpark.github.io/compass_webpage/) | [Video](https://www.youtube.com/watch?v=Zfo3f__suwQ) | [Data](https://drive.google.com/drive/folders/18-H3ukaMlcqKjbtHxfMlq_cToesOkAo6)
+## ICCV 2023
+
+### [Paper](https://openaccess.thecvf.com/content/ICCV2023/papers/Park_COMPASS_High-Efficiency_Deep_Image_Compression_with_Arbitrary-scale_Spatial_Scalability_ICCV_2023_paper.pdf) | [Project Page](https://imjongminpark.github.io/compass_webpage/) | [Video](https://www.youtube.com/watch?v=Zfo3f__suwQ)
 
 ## Installation
 
@@ -17,6 +19,7 @@ pip install torch torchvision
 
 * PyYAML
 * tensorboard
+* thop
 
 ## Datasets
 
@@ -24,7 +27,8 @@ You can download the training and test datasets via this [link](https://drive.go
 
 ```bash
 mkdir datsets_img
-mv <DOWNLOAD_PATH>/train_512.zip datasets_img
+mv <YOUR_DOWNLOAD_PATH>/train_512.zip datasets_img
+mv <YOUR_DOWNLOAD_PATH>/test.zip datasets_img
 
 cd datasets_img
 unzip train_512.zip -d train_512
@@ -32,24 +36,42 @@ unzip test.zip -d test
 ```
 ## Training
 
+Before the training process, download the pre-trained residual compression module and LIFF module via this [link](https://drive.google.com/file/d/12pDQtEWjM9NOnfqnlMs87M8rjHdg2eBi/view?usp=drive_link)
+
+```bash
+mkdir pretrained
+mv <YOUR_DOWNLOAD_PATH>/pretrained.zip pretrained
+cd pretrained
+unzip pretrained.zip
+```
+
+For the training process, choose a lambda value from the set [0.0018, 0.0035, 0.0067, 0.013]. Then, assign this selected value to the 'lmbda' parameter within the 'cfg_train.yaml' configuration file. Ensure this lambda value is consistent with the pre-trained residual compression module you intend to use.
+
 ```bash
 python -m torch.distributed.launch --nproc_per_node=<NUM_OF_GPUS> train.py
 ```
 
-## Tests
+## Evaluation
 
-TBD
+Before the evaluation process, download the whole pre-trained COMPASS model via this [link](https://drive.google.com/file/d/1up8soOMn1tfcSWNW6rl2CknnOw6AuvuU/view?usp=drive_link)
 
-## License
+```bash
+mkdir checkpoints
+mv <YOUR_DOWNLOAD_PATH>/checkpoints.zip checkpoints
+cd checkpoints
+unzip checkpoints.zip
+```
 
-TBD
+For the evaluation process, choose a lambda value from the set [0.0018, 0.0035, 0.0067, 0.013]. Then, assign this selected value to the 'lmbda' parameter within the 'cfg_eval.yaml' configuration file.
 
-## Contributing
-
-TBD
+```bash
+python update.py
+python eval.py
+```
 
 ## Acknowledgements
 
+This work was supported by internal fund/grant of Electronics and Telecommunications Research Institute (ETRI). [23YC1100, Technology Development for Strengthening Competitiveness in Standard IPR for communication and media]
 
 ## Authors
 

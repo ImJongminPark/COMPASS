@@ -353,7 +353,9 @@ def main(cfg, args):
     last_epoch = 0
 
     # load coarse model
-    pretrained_el = torch.load(cfg['checkpoint_el'], map_location=device)
+
+    checkpoint_el = os.path.join(cfg['checkpoint_el'], 'lambda_' + str(cfg['lmbda']), 'pretrained.pth.tar')
+    pretrained_el = torch.load(checkpoint_el, map_location=device)
     pretrained_prediction = torch.load(cfg['checkpoint_prediction'], map_location=device)
 
     net_enhance.load_state_dict(pretrained_el["residual_state_dict"])
