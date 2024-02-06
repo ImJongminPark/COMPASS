@@ -36,7 +36,7 @@ unzip test.zip -d test
 ```
 ## Training
 
-Before the training process, download the pre-trained residual compression module and LIFF module via this [link](https://drive.google.com/file/d/12pDQtEWjM9NOnfqnlMs87M8rjHdg2eBi/view?usp=drive_link)
+Before the training process, download the pre-trained residual compression module and LIFF module via this [link](https://drive.google.com/file/d/12pDQtEWjM9NOnfqnlMs87M8rjHdg2eBi/view?usp=drive_link).
 
 ```bash
 mkdir pretrained
@@ -53,7 +53,7 @@ python -m torch.distributed.launch --nproc_per_node=<NUM_OF_GPUS> train.py
 
 ## Evaluation
 
-Before the evaluation process, download the whole pre-trained COMPASS model via this [link](https://drive.google.com/file/d/1up8soOMn1tfcSWNW6rl2CknnOw6AuvuU/view?usp=drive_link)
+Before the evaluation process, download the whole pre-trained COMPASS model via this [link](https://drive.google.com/file/d/1up8soOMn1tfcSWNW6rl2CknnOw6AuvuU/view?usp=drive_link).
 
 ```bash
 mkdir checkpoints
